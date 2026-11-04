@@ -1,0 +1,231 @@
+---
+import { locales, localeNames, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { switchLocalePath } from '../i18n/utils';
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const home = `/${locale}/`;
+---
+
+<a class="skip-link" href="#contenu">{t('a11y.skip')}</a>
+
+<header class="bar" data-header>
+  <div class="container header">
+  <a href={home} class="brand fade" aria-label="Maxim Tokinlo">
+    <Logo />
+    <span>Maxim Tokinlo</span>
+  </a>
+
+  <div class="actions fade" style="animation-delay: 0.15s">
+    <nav class="nav" aria-label={t('nav.label')}>
+      <a href={`${home}#projets`}>{t('nav.projects')}</a>
+      <a href={`${home}#parcours`}>{t('nav.journey')}</a>
+      <a href={`${home}#contact`}>{t('nav.contact')}</a>
+    </nav>
+
+    <div class="tools">
+      <ul class="langs" aria-label={t('lang.label')}>
+        {locales.map((l) => (
+          <li>
+            <a
+              href={switchLocalePath(Astro.url, l)}
+              hreflang={l}
+              lang={l}
+              data-locale-link={l}
+              aria-current={l === locale ? 'true' : undefined}
+              title={localeNames[l]}
+            >
+              <span aria-hidden="true">{l.toUpperCase()}</span>
+              <span class="sr-only">{localeNames[l]}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <ThemeToggle toDark={t('theme.toDark')} toLight={t('theme.toLight')} />
+    </div>
+  </div>
+  </div>
+</header>
+
+<script>
+  /*
+   * Sticky header: it slips away while reading down and comes back as soon
+   * as the visitor scrolls up, so the language and theme switches are
+   * always one gesture away.
+   */
+  const bar = document.querySelector<HTMLElement>('[data-header]');
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  const update = () => {
+    const y = window.scrollY;
+    if (bar) {
+      bar.classList.toggle('is-scrolled', y > 24);
+      const goingDown = y > lastY + 4;
+      const goingUp = y < lastY - 4;
+      if (goingDown && y > 160 && !bar.contains(document.activeElement)) bar.classList.add('is-hidden');
+      if (goingUp || y <= 160) bar.classList.remove('is-hidden');
+    }
+    lastY = y;
+    ticking = false;
+  };
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
+  bar?.addEventListener('focusin', () => bar.classList.remove('is-hidden'));
+  update();
+
+  /*
+   * Language switch without losing your place: the link is sent to the
+   * same page in the other language, anchored on the section currently
+   * on screen. The choice is remembered for the next visit.
+   */
+  document.querySelectorAll<HTMLAnchorElement>('[data-locale-link]').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        localStorage.setItem('locale', link.dataset.localeLink ?? '');
+      } catch {}
+
+      const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')];
+      const current = sections
+        .filter((s) => s.getBoundingClientRect().top <= window.innerHeight * 0.4)
+        .pop();
+      if (current && window.scrollY > 200) {
+        const url = new URL(link.href);
+        url.hash = current.id;
+        link.href = url.toString();
+      }
+    });
+  });
+</script>
+
+<style>
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    transition:
+      transform 0.6s var(--ease-out),
+      background-color 0.5s ease,
+      border-color 0.5s ease,
+      backdrop-filter 0.5s ease;
+  }
+
+  .bar:global(.is-scrolled) {
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border-bottom-color: var(--line-soft);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+  }
+
+  .bar:global(.is-hidden) {
+    transform: translateY(-100%);
+  }
+
+  .bar:global(.is-scrolled) .header {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 32px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    transition: padding 0.6s var(--ease-out);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 32px;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    font-size: 14px;
+  }
+
+  .nav a,
+  .langs a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.4s ease;
+  }
+
+  .nav a:hover,
+  .langs a:hover,
+  .langs a[aria-current='true'] {
+    color: var(--ink);
+  }
+
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+  }
+
+  .langs {
+    display: flex;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+
+  .langs a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 44px;
+  }
+
+  .langs a[aria-current='true'] {
+    font-weight: 500;
+  }
+
+  @media (max-width: 560px) {
+    .tools {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

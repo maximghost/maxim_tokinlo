@@ -1,0 +1,129 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+  locale: Locale;
+}
+
+const { project, index, locale } = Astro.props;
+const t = useTranslations(locale);
+const { title, tagline, category, status, confidential } = project.data;
+const number = String(index).padStart(2, '0');
+// Confidential projects get no link: there is nothing more to show publicly.
+const Tag = confidential ? 'div' : 'a';
+---
+
+<Tag class="row reveal" href={confidential ? undefined : `#projets`}>
+  <span class="num tabular">{number}</span>
+  <span class="main">
+    <span class="title">{title}</span>
+    <span class="tagline">{tagline}</span>
+  </span>
+  {confidential ? (
+    <span class="badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+      </svg>
+      {t('projects.confidential')}
+    </span>
+  ) : (
+    <span class="side">
+      <span class="info">{category?.split('·')[0]?.trim()} · {status}</span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </span>
+  )}
+</Tag>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px 24px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    transition: padding 0.7s var(--ease-out), background-color 0.7s ease;
+  }
+
+  a.row:hover {
+    padding-inline: 20px;
+    background: var(--surface);
+  }
+
+  a.row:hover .arrow {
+    transform: translateX(6px);
+  }
+
+  .num {
+    font-size: 13px;
+    color: var(--faint);
+  }
+
+  .main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 28px;
+  }
+
+  .title {
+    font-size: clamp(28px, 3.2vw, 40px);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+  }
+
+  .tagline {
+    max-width: 560px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .side {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .info {
+    white-space: nowrap;
+  }
+
+  .side .arrow {
+    font-size: 20px;
+    color: var(--ink);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .row {
+      grid-template-columns: 40px minmax(0, 1fr);
+    }
+    .side,
+    .badge {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>

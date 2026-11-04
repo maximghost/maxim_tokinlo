@@ -1,0 +1,97 @@
+---
+interface Props {
+  toDark: string;
+  toLight: string;
+}
+
+const { toDark, toLight } = Astro.props;
+---
+
+<button class="theme-toggle" type="button" data-to-dark={toDark} data-to-light={toLight} aria-label={toDark}>
+  <!-- Moon: shown in light mode -->
+  <svg class="icon icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"></path>
+  </svg>
+  <!-- Sun: shown in dark mode -->
+  <svg class="icon icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+  </svg>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const root = document.documentElement;
+
+  const syncLabel = () => {
+    if (!button) return;
+    const dark = root.dataset.theme === 'dark';
+    button.setAttribute('aria-label', (dark ? button.dataset.toLight : button.dataset.toDark) ?? '');
+  };
+
+  syncLabel();
+
+  button?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
+    syncLabel();
+  });
+
+  // Follow the system setting live, unless the visitor chose a theme.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem('theme');
+    } catch {}
+    if (saved) return;
+    root.dataset.theme = event.matches ? 'dark' : 'light';
+    syncLabel();
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.4s ease, background-color 0.4s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--ink);
+  }
+
+  .icon {
+    position: absolute;
+    transition: opacity 0.5s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .icon-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  :global([data-theme='dark']) .icon-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+
+  :global([data-theme='dark']) .icon-sun {
+    opacity: 1;
+    transform: none;
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+/*
+ * Decorative constellation drawn in the hero: lines trace themselves,
+ * stars twinkle, the last star carries the accent color.
+ */
+const stars = [
+  { x: 40, y: 330, r: 3, delay: 0.2, strong: false },
+  { x: 150, y: 250, r: 3.5, delay: 1.1, strong: true },
+  { x: 230, y: 290, r: 2.5, delay: 2.3, strong: false },
+  { x: 190, y: 120, r: 3, delay: 0.7, strong: false },
+  { x: 300, y: 60, r: 2.5, delay: 3.1, strong: false },
+  { x: 320, y: 170, r: 4, delay: 1.8, strong: true },
+  { x: 410, y: 205, r: 3, delay: 2.7, strong: false },
+];
+
+const paths = [
+  { d: 'M40 330 L150 250 L230 290 L320 170 L410 205 L480 70', delay: 0.9 },
+  { d: 'M150 250 L190 120 L320 170', delay: 1.5 },
+  { d: 'M190 120 L300 60 L410 205', delay: 2.1, soft: true },
+];
+---
+
+<svg class="constellation" viewBox="0 0 520 420" fill="none" aria-hidden="true">
+  {paths.map((p) => (
+    <path
+      class="draw"
+      pathLength="1"
+      d={p.d}
+      stroke={p.soft ? 'var(--line)' : 'var(--decor)'}
+      stroke-width="1"
+      style={`animation-delay: ${p.delay}s`}
+    />
+  ))}
+  {stars.map((s) => (
+    <circle
+      class="star"
+      cx={s.x}
+      cy={s.y}
+      r={s.r}
+      fill={s.strong ? 'var(--muted)' : 'var(--faint)'}
+      style={`animation-delay: ${s.delay}s`}
+    />
+  ))}
+  <circle cx="480" cy="70" r="5" fill="var(--accent)"></circle>
+  <circle class="halo" cx="480" cy="70" r="14" stroke="var(--accent)" stroke-width="1"></circle>
+</svg>
+
+<style>
+  .constellation {
+    position: absolute;
+    right: clamp(-120px, -4vw, 0px);
+    top: 24px;
+    width: min(520px, 46vw);
+    height: auto;
+    pointer-events: none;
+  }
+
+  .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 2.8s var(--ease-in-out) forwards;
+  }
+
+  .star {
+    animation: twinkle 4.5s ease-in-out infinite;
+  }
+
+  .halo {
+    opacity: 0.35;
+    transform-origin: 480px 70px;
+    animation: halo 4s var(--ease-in-out) infinite;
+  }
+
+  @keyframes draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 1; }
+  }
+  @keyframes halo {
+    0%, 100% { transform: scale(1); opacity: 0.35; }
+    50% { transform: scale(1.25); opacity: 0.1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .draw { stroke-dashoffset: 0; }
+  }
+
+  @media (max-width: 720px) {
+    .constellation { opacity: 0.5; }
+  }
+</style>
