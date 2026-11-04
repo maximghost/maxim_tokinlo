@@ -3,7 +3,7 @@ import { defineConfig, envField } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // TODO: replace with the custom domain once it is purchased.
-const SITE_URL = 'https://maxim-tokinlo.vercel.app';
+const SITE_URL = 'https://maximtokinlo.vercel.app';
 
 export default defineConfig({
   site: SITE_URL,
