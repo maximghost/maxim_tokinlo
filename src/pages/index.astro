@@ -16,24 +16,37 @@ import { locales, localeNames } from '../i18n/config';
     <title>Maxim Tokinlo</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {locales.map((l) => <link rel="alternate" hreflang={l} href={`/${l}/`} />)}
+    {locales.map((l) => (
+      <link rel="alternate" hreflang={l} href={`/${l}/`} />
+    ))}
     <script is:inline define:vars={{ locales }}>
       let target = null;
-      try { target = localStorage.getItem('locale'); } catch (e) {}
+      try {
+        target = localStorage.getItem('locale');
+      } catch (e) {}
       if (!locales.includes(target)) {
-        target = (navigator.languages || [navigator.language])
-          .map((l) => String(l).slice(0, 2).toLowerCase())
-          .find((l) => locales.includes(l)) || 'fr';
+        target =
+          (navigator.languages || [navigator.language])
+            .map((l) => String(l).slice(0, 2).toLowerCase())
+            .find((l) => locales.includes(l)) || 'fr';
       }
       location.replace('/' + target + '/' + location.hash);
     </script>
-    <noscript><meta http-equiv="refresh" content="0; url=/fr/" /></noscript>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=/fr/" />
+    </noscript>
   </head>
   <body>
     <main class="container" style="padding-block: 96px">
       <p>Maxim Tokinlo</p>
       <ul>
-        {locales.map((l) => <li><a href={`/${l}/`} hreflang={l} lang={l}>{localeNames[l]}</a></li>)}
+        {locales.map((l) => (
+          <li>
+            <a href={`/${l}/`} hreflang={l} lang={l}>
+              {localeNames[l]}
+            </a>
+          </li>
+        ))}
       </ul>
     </main>
   </body>

@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // TODO: replace with the custom domain once it is purchased.
@@ -16,6 +16,13 @@ export default defineConfig({
       // The root page (src/pages/index.astro) picks the visitor's language.
       prefixDefaultLocale: true,
       redirectToDefaultLocale: false,
+    },
+  },
+  env: {
+    schema: {
+      // Public by design: Web3Forms access keys only route messages to an inbox.
+      // Without it, the contact buttons fall back to a plain e-mail link.
+      PUBLIC_WEB3FORMS_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
     },
   },
   integrations: [

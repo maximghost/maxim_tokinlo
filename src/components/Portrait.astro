@@ -1,0 +1,134 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Constellation from './Constellation.astro';
+
+interface Props {
+  alt: string;
+  pendingLabel: string;
+}
+
+const { alt, pendingLabel } = Astro.props;
+
+/*
+ * The portrait is optional: drop a file named portrait.jpg (or .jpeg, .png,
+ * .webp) into src/assets/ and it appears here. Until then, an elegant
+ * placeholder keeps the layout in place.
+ */
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp}', {
+  eager: true,
+});
+const portrait = Object.values(files)[0]?.default;
+---
+
+<figure class="portrait fade" style="animation-delay: 0.6s">
+  <div class="frame">
+    {portrait ? (
+      <Image
+        src={portrait}
+        alt={alt}
+        widths={[360, 540, 720, 960]}
+        sizes="(max-width: 860px) 80vw, 340px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    ) : (
+      <div class="placeholder" role="img" aria-label={pendingLabel}>
+        <span class="initials" aria-hidden="true">
+          MT
+        </span>
+        <span class="pending" aria-hidden="true">
+          {pendingLabel}
+        </span>
+      </div>
+    )}
+  </div>
+  <Constellation />
+</figure>
+
+<style>
+  .portrait {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    margin: 0;
+    justify-self: end;
+  }
+
+  .frame {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    background: var(--surface);
+    box-shadow: 0 40px 80px -40px var(--shadow-phone);
+    transition: background-color 0.5s ease;
+  }
+
+  .frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+    animation: settle 2.4s var(--ease-out) 0.6s both;
+  }
+
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    background:
+      linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0 / 100% 48px,
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0 / 48px 100%;
+  }
+
+  .initials {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 96px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .pending {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* The constellation now leads the eye to the portrait: its accent star
+     lands right on the frame's left edge. */
+  .portrait :global(.constellation) {
+    z-index: 0;
+    top: 6%;
+    right: auto;
+    left: -85%;
+    width: 90%;
+    max-width: none;
+  }
+
+  @keyframes settle {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .portrait {
+      justify-self: start;
+      max-width: 320px;
+    }
+    .portrait :global(.constellation) {
+      display: none;
+    }
+  }
+</style>

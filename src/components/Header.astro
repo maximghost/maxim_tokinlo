@@ -14,43 +14,45 @@ const t = useTranslations(locale);
 const home = `/${locale}/`;
 ---
 
-<a class="skip-link" href="#contenu">{t('a11y.skip')}</a>
+<a class="skip-link" href="#contenu">
+  {t('a11y.skip')}
+</a>
 
 <header class="bar" data-header>
   <div class="container header">
-  <a href={home} class="brand fade" aria-label="Maxim Tokinlo">
-    <Logo />
-    <span>Maxim Tokinlo</span>
-  </a>
+    <a href={home} class="brand fade" aria-label="Maxim Tokinlo">
+      <Logo />
+      <span>Maxim Tokinlo</span>
+    </a>
 
-  <div class="actions fade" style="animation-delay: 0.15s">
-    <nav class="nav" aria-label={t('nav.label')}>
-      <a href={`${home}#projets`}>{t('nav.projects')}</a>
-      <a href={`${home}#parcours`}>{t('nav.journey')}</a>
-      <a href={`${home}#contact`}>{t('nav.contact')}</a>
-    </nav>
+    <div class="actions fade" style="animation-delay: 0.15s">
+      <nav class="nav" aria-label={t('nav.label')}>
+        <a href={`${home}#projets`}>{t('nav.projects')}</a>
+        <a href={`${home}#parcours`}>{t('nav.journey')}</a>
+        <a href={`${home}#contact`}>{t('nav.contact')}</a>
+      </nav>
 
-    <div class="tools">
-      <ul class="langs" aria-label={t('lang.label')}>
-        {locales.map((l) => (
-          <li>
-            <a
-              href={switchLocalePath(Astro.url, l)}
-              hreflang={l}
-              lang={l}
-              data-locale-link={l}
-              aria-current={l === locale ? 'true' : undefined}
-              title={localeNames[l]}
-            >
-              <span aria-hidden="true">{l.toUpperCase()}</span>
-              <span class="sr-only">{localeNames[l]}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <ThemeToggle toDark={t('theme.toDark')} toLight={t('theme.toLight')} />
+      <div class="tools">
+        <ul class="langs" aria-label={t('lang.label')}>
+          {locales.map((l) => (
+            <li>
+              <a
+                href={switchLocalePath(Astro.url, l)}
+                hreflang={l}
+                lang={l}
+                data-locale-link={l}
+                aria-current={l === locale ? 'true' : undefined}
+                title={localeNames[l]}
+              >
+                <span aria-hidden="true">{l.toUpperCase()}</span>
+                <span class="sr-only">{localeNames[l]}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <ThemeToggle toDark={t('theme.toDark')} toLight={t('theme.toLight')} />
+      </div>
     </div>
-  </div>
   </div>
 </header>
 
@@ -102,9 +104,7 @@ const home = `/${locale}/`;
       } catch {}
 
       const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')];
-      const current = sections
-        .filter((s) => s.getBoundingClientRect().top <= window.innerHeight * 0.4)
-        .pop();
+      const current = sections.filter((s) => s.getBoundingClientRect().top <= window.innerHeight * 0.4).pop();
       if (current && window.scrollY > 200) {
         const url = new URL(link.href);
         url.hash = current.id;

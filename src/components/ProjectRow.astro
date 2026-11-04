@@ -25,8 +25,17 @@ const Tag = confidential ? 'div' : 'a';
   </span>
   {confidential ? (
     <span class="badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
         <rect x="4" y="11" width="16" height="10" rx="2"></rect>
         <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
       </svg>
@@ -34,8 +43,12 @@ const Tag = confidential ? 'div' : 'a';
     </span>
   ) : (
     <span class="side">
-      <span class="info">{category?.split('·')[0]?.trim()} · {status}</span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <span class="info">
+        {category?.split('·')[0]?.trim()} · {status}
+      </span>
+      <span class="arrow" aria-hidden="true">
+        →
+      </span>
     </span>
   )}
 </Tag>
@@ -50,7 +63,9 @@ const Tag = confidential ? 'div' : 'a';
     border-bottom: 1px solid var(--line);
     color: var(--ink);
     text-decoration: none;
-    transition: padding 0.7s var(--ease-out), background-color 0.7s ease;
+    transition:
+      padding 0.7s var(--ease-out),
+      background-color 0.7s ease;
   }
 
   a.row:hover {

@@ -52,13 +52,18 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
 
     {chips.length > 0 && (
       <ul class="chips">
-        {chips.map((c) => <li>{c}</li>)}
+        {chips.map((c) => (
+          <li>{c}</li>
+        ))}
       </ul>
     )}
 
     <div class="links">
       <a href={`#projets`} class="link">
-        {t('projects.caseStudy')} <span class="arrow" aria-hidden="true">→</span>
+        {t('projects.caseStudy')}{' '}
+        <span class="arrow" aria-hidden="true">
+          →
+        </span>
       </a>
       {links.demo && (
         <a href={links.demo} class="link accent" target="_blank" rel="noopener">
@@ -72,7 +77,12 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
     <div class="stage">
       {images.slice(0, 2).map((img, i) => (
         <div class:list={['phone', i === 0 ? 'phone-a' : 'phone-b']}>
-          <Image src={img.src} alt={img.alt} widths={[280, 460, 628]} sizes="(max-width: 900px) 40vw, 230px" />
+          <Image
+            src={img.src}
+            alt={img.alt}
+            widths={[280, 460, 628]}
+            sizes="(max-width: 900px) 40vw, 230px"
+          />
         </div>
       ))}
       <p class="status">{status}</p>
@@ -245,7 +255,12 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 </style>

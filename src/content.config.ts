@@ -19,18 +19,14 @@ const projects = defineCollection({
       period: z.string(),
       status: z.string(),
       stack: z.array(z.string()).default([]),
-      stats: z
-        .array(z.object({ value: z.string(), label: z.string() }))
-        .default([]),
+      stats: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
       links: z
         .object({
           demo: z.url().optional(),
           repo: z.url().optional(),
         })
         .default({}),
-      images: z
-        .array(z.object({ src: image(), alt: z.string() }))
-        .default([]),
+      images: z.array(z.object({ src: image(), alt: z.string() })).default([]),
       featured: z.boolean().default(false),
       confidential: z.boolean().default(false),
       order: z.number().int(),

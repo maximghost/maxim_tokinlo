@@ -1,0 +1,567 @@
+---
+import { PUBLIC_WEB3FORMS_KEY } from 'astro:env/client';
+import type { Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  email: string;
+}
+
+const { locale, email } = Astro.props;
+const t = useTranslations(locale);
+
+const reasons = [
+  t('form.reason.project'),
+  t('form.reason.freelance'),
+  t('form.reason.job'),
+  t('form.reason.partnership'),
+  t('form.reason.other'),
+];
+
+// Error messages are read by the script, in the page's language.
+const messages = {
+  required: t('form.required'),
+  invalidEmail: t('form.invalidEmail'),
+  sending: t('form.sending'),
+  submit: t('form.submit'),
+};
+---
+
+{PUBLIC_WEB3FORMS_KEY && (
+  <dialog
+    class="dialog"
+    id="contact-dialog"
+    aria-labelledby="contact-dialog-title"
+    data-messages={JSON.stringify(messages)}
+  >
+    <div class="panel">
+      <header class="head">
+        <div>
+          <h2 id="contact-dialog-title">{t('form.title')}</h2>
+          <p class="intro">{t('form.intro')}</p>
+        </div>
+        <button class="close" type="button" data-contact-close aria-label={t('form.close')}>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </header>
+
+      <form class="form" novalidate data-contact-form data-key={PUBLIC_WEB3FORMS_KEY}>
+        <div class="grid">
+          <div class="field">
+            <label for="cf-first">{t('form.firstName')}</label>
+            <input
+              id="cf-first"
+              name="firstName"
+              type="text"
+              autocomplete="given-name"
+              required
+              aria-describedby="cf-first-err"
+            />
+            <p class="error" id="cf-first-err" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="cf-last">{t('form.lastName')}</label>
+            <input
+              id="cf-last"
+              name="lastName"
+              type="text"
+              autocomplete="family-name"
+              required
+              aria-describedby="cf-last-err"
+            />
+            <p class="error" id="cf-last-err" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cf-email">{t('form.email')}</label>
+          <input
+            id="cf-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            aria-describedby="cf-email-err"
+          />
+          <p class="error" id="cf-email-err" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-reason">{t('form.reason')}</label>
+          <select id="cf-reason" name="reason" required aria-describedby="cf-reason-err">
+            <option value="" disabled selected>
+              {t('form.reason.placeholder')}
+            </option>
+            {reasons.map((r) => (
+              <option value={r}>{r}</option>
+            ))}
+          </select>
+          <p class="error" id="cf-reason-err" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-message">{t('form.message')}</label>
+          <textarea
+            id="cf-message"
+            name="message"
+            rows="5"
+            required
+            aria-describedby="cf-message-err"
+          ></textarea>
+          <p class="error" id="cf-message-err" aria-live="polite"></p>
+        </div>
+
+        <!-- Honeypot: invisible to people, filled in by spam bots. -->
+        <input
+          class="trap"
+          type="checkbox"
+          name="botcheck"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        />
+
+        <p class="failure" data-contact-failure hidden>
+          {t('form.error')} <a href={`mailto:${email}`}>{email}</a>.
+        </p>
+
+        <button class="btn btn-primary submit" type="submit">
+          <span data-contact-label>{t('form.submit')}</span>
+          <span class="arrow" aria-hidden="true">
+            →
+          </span>
+        </button>
+      </form>
+
+      <div class="success" data-contact-success hidden>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="19" stroke="var(--accent)" stroke-width="1.2"></circle>
+          <path
+            class="tick"
+            d="M12.5 20.5l5 5 10-11"
+            stroke="var(--accent)"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            pathLength="1"
+          ></path>
+        </svg>
+        <h3>{t('form.success.title')}</h3>
+        <p>{t('form.success.text')}</p>
+        <button class="btn btn-ghost" type="button" data-contact-close>
+          {t('form.close')}
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
+
+<script>
+  type Messages = { required: string; invalidEmail: string; sending: string; submit: string };
+
+  const dialog = document.querySelector<HTMLDialogElement>('#contact-dialog');
+  const form = dialog?.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (dialog && form) {
+    const messages: Messages = JSON.parse(dialog.dataset.messages ?? '{}');
+    const success = dialog.querySelector<HTMLElement>('[data-contact-success]');
+    const failure = dialog.querySelector<HTMLElement>('[data-contact-failure]');
+    const label = dialog.querySelector<HTMLElement>('[data-contact-label]');
+    const submit = form.querySelector<HTMLButtonElement>('[type="submit"]');
+
+    // Every "contact" button opens the dialog instead of the mail app.
+    document.querySelectorAll<HTMLAnchorElement>('[data-contact-open]').forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        reset();
+        dialog.showModal();
+      });
+    });
+
+    dialog
+      .querySelectorAll('[data-contact-close]')
+      .forEach((button) => button.addEventListener('click', () => dialog.close()));
+
+    // A click on the backdrop closes the dialog.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    const fields = [
+      ...form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+        'input:not(.trap), select, textarea',
+      ),
+    ];
+
+    const showError = (field: (typeof fields)[number], text: string) => {
+      const slot = document.getElementById(`${field.id}-err`);
+      if (slot) slot.textContent = text;
+      field.toggleAttribute('aria-invalid', text !== '');
+    };
+
+    const validate = (field: (typeof fields)[number]) => {
+      if (field.validity.valueMissing || field.value.trim() === '') {
+        showError(field, messages.required);
+        return false;
+      }
+      if (field.validity.typeMismatch) {
+        showError(field, messages.invalidEmail);
+        return false;
+      }
+      showError(field, '');
+      return true;
+    };
+
+    fields.forEach((field) =>
+      field.addEventListener('blur', () => {
+        if (field.hasAttribute('aria-invalid') || field.value) validate(field);
+      }),
+    );
+
+    function reset() {
+      form!.hidden = false;
+      if (success) success.hidden = true;
+      if (failure) failure.hidden = true;
+    }
+
+    const setSending = (sending: boolean) => {
+      if (submit) submit.disabled = sending;
+      if (label) label.textContent = sending ? messages.sending : messages.submit;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (failure) failure.hidden = true;
+
+      const results = fields.map(validate);
+      const firstInvalid = fields[results.indexOf(false)];
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      const data = new FormData(form);
+      const fullName = `${data.get('firstName')} ${data.get('lastName')}`.trim();
+      const payload = {
+        access_key: form.dataset.key,
+        subject: `Portfolio — ${data.get('reason')} — ${fullName}`,
+        from_name: 'Portfolio Maxim Tokinlo',
+        name: fullName,
+        email: data.get('email'),
+        replyto: data.get('email'),
+        reason: data.get('reason'),
+        message: data.get('message'),
+        page: location.href,
+        botcheck: data.get('botcheck') ? true : false,
+      };
+
+      setSending(true);
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => ({ success: false }));
+        if (!response.ok || !result.success) throw new Error(result.message ?? 'Submission failed');
+
+        form.reset();
+        form.hidden = true;
+        if (success) success.hidden = false;
+        success?.querySelector<HTMLButtonElement>('button')?.focus();
+      } catch {
+        if (failure) failure.hidden = false;
+      } finally {
+        setSending(false);
+      }
+    });
+  }
+</script>
+
+<style>
+  .dialog {
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 1px solid var(--line-soft);
+    border-radius: 28px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.45);
+  }
+
+  .dialog[open] {
+    animation: dialog-in 0.6s var(--ease-out);
+  }
+
+  .dialog::backdrop {
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .dialog[open]::backdrop {
+    animation: backdrop-in 0.5s ease;
+  }
+
+  :global(html:has(dialog[open])) {
+    overflow: hidden;
+  }
+
+  .panel {
+    padding: clamp(24px, 5vw, 40px);
+  }
+
+  .head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .head h2 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 30px;
+    letter-spacing: -0.035em;
+  }
+
+  .intro {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      border-color 0.4s ease,
+      transform 0.6s var(--ease-out);
+  }
+
+  .close:hover {
+    border-color: var(--ink);
+    transform: rotate(90deg);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 28px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0 20px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 0 12px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 16px;
+    transition: border-color 0.4s ease;
+  }
+
+  select {
+    appearance: none;
+    padding-right: 28px;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 12px) 55%,
+      calc(100% - 7px) 55%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+
+  select option {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.55;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    box-shadow: 0 1px 0 0 var(--accent);
+    border-radius: 0;
+  }
+
+  [aria-invalid] {
+    border-bottom-color: #c2410c;
+  }
+
+  :global([data-theme='dark']) [aria-invalid] {
+    border-bottom-color: #fb923c;
+  }
+
+  .error {
+    min-height: 20px;
+    margin: 4px 0 8px;
+    font-size: 13px;
+    color: #c2410c;
+  }
+
+  :global([data-theme='dark']) .error {
+    color: #fb923c;
+  }
+
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .failure {
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .failure a {
+    color: var(--accent);
+  }
+
+  .submit {
+    align-self: flex-start;
+    margin-top: 8px;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .submit:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+
+  .success {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 32px;
+  }
+
+  .success[hidden],
+  .form[hidden],
+  .failure[hidden] {
+    display: none;
+  }
+
+  .success h3 {
+    margin: 16px 0 0;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.03em;
+  }
+
+  .success p {
+    margin: 0 0 16px;
+    color: var(--ink-2);
+  }
+
+  .success .btn {
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .tick {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: tick 0.9s var(--ease-in-out) 0.2s forwards;
+  }
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes tick {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tick {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>
