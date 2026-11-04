@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
+import { localePath, projectSlug } from '../i18n/utils';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -11,13 +12,14 @@ interface Props {
 
 const { project, index, locale } = Astro.props;
 const t = useTranslations(locale);
+const href = localePath(locale, 'projects', projectSlug(project));
 const { title, tagline, category, status, confidential } = project.data;
 const number = String(index).padStart(2, '0');
 // Confidential projects get no link: there is nothing more to show publicly.
 const Tag = confidential ? 'div' : 'a';
 ---
 
-<Tag class="row reveal" href={confidential ? undefined : `#projets`}>
+<Tag class="row reveal" href={confidential ? undefined : href}>
   <span class="num tabular">{number}</span>
   <span class="main">
     <span class="title">{title}</span>

@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
+import { localePath, projectSlug } from '../i18n/utils';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -12,6 +13,7 @@ interface Props {
 
 const { project, index, locale } = Astro.props;
 const t = useTranslations(locale);
+const href = localePath(locale, 'projects', projectSlug(project));
 const { title, category, tagline, summary, stats, stack, links, images, status } = project.data;
 const number = String(index).padStart(2, '0');
 // The first line of the tagline is set in italic serif.
@@ -59,7 +61,7 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
     )}
 
     <div class="links">
-      <a href={`#projets`} class="link">
+      <a href={href} class="link">
         {t('projects.caseStudy')}{' '}
         <span class="arrow" aria-hidden="true">
           →

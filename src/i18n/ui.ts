@@ -101,6 +101,16 @@ const fr = {
   'form.success.text': 'Merci. Je vous réponds au plus vite.',
   'form.error': 'L’envoi n’a pas abouti. Réessayez, ou écrivez-moi directement à',
 
+  'case.back': 'Tous les projets',
+  'case.role': 'Rôle',
+  'case.period': 'Période',
+  'case.status': 'Statut',
+  'case.stack': 'Technologies',
+  'case.next': 'Projet suivant',
+  'case.cta.title.before': 'Un projet de cette ',
+  'case.cta.title.accent': 'exigence\u00A0?',
+  'case.cta.text': 'Parlons de ce que vous voulez construire.',
+
   'footer.credit': 'Conçu et développé par Maxim Tokinlo',
 } as const;
 
@@ -201,6 +211,16 @@ const en: Dictionary = {
   'form.success.text': 'Thank you. I will get back to you shortly.',
   'form.error': 'Your message could not be sent. Please try again, or email me directly at',
 
+  'case.back': 'All work',
+  'case.role': 'Role',
+  'case.period': 'Timeline',
+  'case.status': 'Status',
+  'case.stack': 'Technologies',
+  'case.next': 'Next project',
+  'case.cta.title.before': 'A project held to ',
+  'case.cta.title.accent': 'this standard?',
+  'case.cta.text': 'Let’s talk about what you want to build.',
+
   'footer.credit': 'Designed and built by Maxim Tokinlo',
 };
 
@@ -297,6 +317,16 @@ const fi: Dictionary = {
   'form.success.title': 'Viesti lähetetty.',
   'form.success.text': 'Kiitos. Vastaan sinulle pian.',
   'form.error': 'Viestin lähetys epäonnistui. Yritä uudelleen tai kirjoita suoraan osoitteeseen',
+
+  'case.back': 'Kaikki projektit',
+  'case.role': 'Rooli',
+  'case.period': 'Ajanjakso',
+  'case.status': 'Tila',
+  'case.stack': 'Teknologiat',
+  'case.next': 'Seuraava projekti',
+  'case.cta.title.before': 'Projekti, jossa on ',
+  'case.cta.title.accent': 'samat vaatimukset?',
+  'case.cta.text': 'Kerro, mitä haluat rakentaa.',
 
   'footer.credit': 'Suunnitellut ja toteuttanut Maxim Tokinlo',
 };

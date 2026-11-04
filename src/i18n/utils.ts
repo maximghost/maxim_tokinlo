@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { defaultLocale, isLocale, locales, type Locale } from './config';
+import { defaultLocale, isLocale, locales, routes, type Locale, type RouteKey } from './config';
 
 /** Reads the language from a URL such as /en/projects/ (falls back to French). */
 export function getLocaleFromUrl(url: URL): Locale {
@@ -7,17 +7,30 @@ export function getLocaleFromUrl(url: URL): Locale {
   return isLocale(first) ? first : defaultLocale;
 }
 
+/** Builds a localised path: localePath('en', 'projects', 'gamberge') -> /en/projects/gamberge/ */
+export function localePath(locale: Locale, route?: RouteKey, slug?: string): string {
+  const parts: string[] = [locale];
+  if (route) parts.push(routes[route][locale]);
+  if (slug) parts.push(slug);
+  return `/${parts.join('/')}/`;
+}
+
 /**
- * Same page, other language: /fr/a-propos/ -> /en/a-propos/.
- * Used by the language switcher so visitors never lose their place.
+ * Same page, other language: /fr/projets/gamberge/ -> /en/projects/gamberge/.
+ * Translated URL segments are mapped too, so visitors never lose their place.
  */
 export function switchLocalePath(url: URL, target: Locale): string {
   const segments = url.pathname.split('/');
-  if (isLocale(segments[1])) {
-    segments[1] = target;
-    return segments.join('/');
+  const current = segments[1];
+  if (!isLocale(current)) return `/${target}/`;
+
+  segments[1] = target;
+  const section = segments[2];
+  if (section) {
+    const key = (Object.keys(routes) as RouteKey[]).find((k) => routes[k][current] === section);
+    if (key) segments[2] = routes[key][target];
   }
-  return `/${target}/`;
+  return segments.join('/');
 }
 
 /** Every language version of the current page, for hreflang links. */
@@ -26,6 +39,11 @@ export function alternates(url: URL): { locale: Locale; path: string }[] {
 }
 
 type Project = CollectionEntry<'projects'>;
+
+/** The project's slug, without its language folder: "fr/gamberge" -> "gamberge". */
+export function projectSlug(project: Project): string {
+  return project.id.split('/').slice(1).join('/');
+}
 
 /**
  * Projects for one language, sorted by `order`.
@@ -37,7 +55,8 @@ export async function getProjects(locale: Locale): Promise<Project[]> {
   const bySlug = new Map<string, Partial<Record<Locale, Project>>>();
 
   for (const entry of all) {
-    const [lang, slug] = entry.id.split('/');
+    const [lang] = entry.id.split('/');
+    const slug = projectSlug(entry);
     if (!isLocale(lang) || !slug) continue;
     const versions = bySlug.get(slug) ?? {};
     versions[lang] = entry;
