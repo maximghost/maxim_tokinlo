@@ -182,6 +182,82 @@ img {
 }
 
 /* ------------------------------------------------------------------ *
+ * Long-form text (case studies, About page)
+ * ------------------------------------------------------------------ */
+.prose {
+  max-width: 720px;
+  margin-inline: auto;
+  counter-reset: section;
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.prose h2 {
+  counter-increment: section;
+  margin: 96px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-strong);
+  font-weight: 500;
+  font-size: clamp(28px, 3vw, 36px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.prose h2::before {
+  content: counter(section, decimal-leading-zero);
+  display: block;
+  margin-bottom: 20px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+
+.prose h2:first-child {
+  margin-top: 0;
+}
+
+.prose p {
+  margin: 24px 0 0;
+}
+
+.prose strong {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.prose ul {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.prose li {
+  position: relative;
+  padding-left: 28px;
+}
+
+.prose li + li {
+  margin-top: 12px;
+}
+
+.prose li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 12px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.prose a {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ *
  * Links and buttons
  * ------------------------------------------------------------------ */
 .link {

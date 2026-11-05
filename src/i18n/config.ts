@@ -26,6 +26,7 @@ export function isLocale(value: unknown): value is Locale {
  */
 export const routes = {
   projects: { fr: 'projets', en: 'projects', fi: 'projektit' },
+  about: { fr: 'a-propos', en: 'about', fi: 'tietoa' },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type RouteKey = keyof typeof routes;

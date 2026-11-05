@@ -1,7 +1,7 @@
 ---
 import { locales, localeNames, type Locale } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
-import { switchLocalePath } from '../i18n/utils';
+import { localePath, switchLocalePath } from '../i18n/utils';
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
@@ -46,7 +46,7 @@ const home = `/${locale}/`;
         <a href={`${home}#projets`} style="--i: 0">
           {t('nav.projects')}
         </a>
-        <a href={`${home}#parcours`} style="--i: 1">
+        <a href={localePath(locale, 'about')} style="--i: 1">
           {t('nav.journey')}
         </a>
         <a href={`${home}#contact`} style="--i: 2">

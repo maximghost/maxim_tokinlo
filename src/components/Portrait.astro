@@ -102,14 +102,15 @@ const portrait = Object.values(files)[0]?.default;
     color: var(--muted);
   }
 
-  /* The constellation now leads the eye to the portrait: its accent star
-     lands right on the frame's left edge. */
+  /* The constellation rises from the frame's top edge into the empty space
+     above it, its accent star at the top right. */
   .portrait :global(.constellation) {
     z-index: 0;
-    top: 6%;
-    right: auto;
-    left: -85%;
-    width: 90%;
+    top: auto;
+    right: -4%;
+    bottom: calc(100% - 36px);
+    left: auto;
+    width: 52%;
     max-width: none;
   }
 
@@ -122,13 +123,17 @@ const portrait = Object.values(files)[0]?.default;
     }
   }
 
+  /* Only wide screens have room for it above the frame. */
+  @media (max-width: 1200px) {
+    .portrait :global(.constellation) {
+      display: none;
+    }
+  }
+
   @media (max-width: 860px) {
     .portrait {
       justify-self: start;
       max-width: 320px;
-    }
-    .portrait :global(.constellation) {
-      display: none;
     }
   }
 </style>

@@ -8,7 +8,7 @@ import FeaturedProject from '../../components/FeaturedProject.astro';
 import ProjectRow from '../../components/ProjectRow.astro';
 import { locales, type Locale } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
-import { getProjects } from '../../i18n/utils';
+import { getProjects, localePath } from '../../i18n/utils';
 
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
@@ -146,7 +146,12 @@ const email = 'yaovitokinlo13@gmail.com';
       </p>
       <div class="journey-bottom">
         <p class="journey-text reveal">{t('journey.text')}</p>
-        {/* “Read my story” link: added back once the About page exists. */}
+        <a href={localePath(locale, 'about')} class="link reveal journey-link">
+          {t('journey.link')}{' '}
+          <span class="arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
       </div>
     </section>
 

@@ -113,6 +113,18 @@ const fr = {
   'case.cta.title.accent': 'exigence\u00A0?',
   'case.cta.text': 'Parlons de ce que vous voulez construire.',
 
+  'about.label': 'À propos',
+  'about.title.before': 'Rigueur, persévérance, ',
+  'about.title.accent': 'et l’envie de bien faire.',
+  'about.fact.education': 'Formation',
+  'about.fact.education.value': 'Licence Internet et multimédia, IFRI (Université d’Abomey-Calavi)',
+  'about.fact.location': 'Localisation',
+  'about.fact.location.value': 'Bénin · disponible à distance',
+  'about.fact.company': 'Structure',
+  'about.fact.tools': 'Outils',
+  'about.cta.before': 'Construisons quelque chose ',
+  'about.cta.accent': 'ensemble.',
+
   'footer.credit': 'Conçu et développé par Maxim Tokinlo',
 } as const;
 
@@ -225,6 +237,18 @@ const en: Dictionary = {
   'case.cta.title.accent': 'this standard?',
   'case.cta.text': 'Let’s talk about what you want to build.',
 
+  'about.label': 'About',
+  'about.title.before': 'Rigour, perseverance, ',
+  'about.title.accent': 'and the drive to do it well.',
+  'about.fact.education': 'Education',
+  'about.fact.education.value': 'Bachelor’s in Internet and Multimedia, IFRI (University of Abomey-Calavi)',
+  'about.fact.location': 'Location',
+  'about.fact.location.value': 'Benin · available remotely',
+  'about.fact.company': 'Company',
+  'about.fact.tools': 'Tools',
+  'about.cta.before': 'Let’s build something ',
+  'about.cta.accent': 'together.',
+
   'footer.credit': 'Designed and built by Maxim Tokinlo',
 };
 
@@ -333,6 +357,19 @@ const fi: Dictionary = {
   'case.cta.title.before': 'Projekti, jossa on ',
   'case.cta.title.accent': 'samat vaatimukset?',
   'case.cta.text': 'Kerro, mitä haluat rakentaa.',
+
+  'about.label': 'Tietoa minusta',
+  'about.title.before': 'Huolellisuutta, sinnikkyyttä ',
+  'about.title.accent': 'ja halu tehdä hyvin.',
+  'about.fact.education': 'Koulutus',
+  'about.fact.education.value':
+    'Internetin ja multimedian kandidaattiopinnot, IFRI (Abomey-Calavin yliopisto)',
+  'about.fact.location': 'Sijainti',
+  'about.fact.location.value': 'Benin · saatavilla etänä',
+  'about.fact.company': 'Yritys',
+  'about.fact.tools': 'Työkalut',
+  'about.cta.before': 'Rakennetaan jotain ',
+  'about.cta.accent': 'yhdessä.',
 
   'footer.credit': 'Suunnitellut ja toteuttanut Maxim Tokinlo',
 };
