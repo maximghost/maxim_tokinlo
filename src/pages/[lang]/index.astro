@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import Portrait from '../../components/Portrait.astro';
 import ContactDialog from '../../components/ContactDialog.astro';
 import FeaturedProject from '../../components/FeaturedProject.astro';
+import Skills from '../../components/Skills.astro';
 import ProjectRow from '../../components/ProjectRow.astro';
 import { locales, type Locale } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
@@ -134,10 +135,13 @@ const email = 'yaovitokinlo13@gmail.com';
       </div>
     </section>
 
+    <!-- Skills -->
+    <Skills locale={locale} number="03" />
+
     <!-- Journey -->
     <section id="parcours" class="container section section-lg">
       <p class="eyebrow reveal">
-        <span class="tabular">03</span>
+        <span class="tabular">04</span>
         <span>{t('journey.label')}</span>
       </p>
       <p class="quote reveal">

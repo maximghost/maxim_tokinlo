@@ -1,0 +1,171 @@
+---
+import type { Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { skillGroups } from '../data/skills';
+
+interface Props {
+  locale: Locale;
+  number: string;
+}
+
+const { locale, number } = Astro.props;
+const t = useTranslations(locale);
+const groups = skillGroups(locale);
+---
+
+<section id="competences" class="container section">
+  <div class="head">
+    <div>
+      <p class="eyebrow reveal">
+        <span class="tabular">{number}</span>
+        <span>{t('skills.label')}</span>
+      </p>
+      <h2 class="section-title reveal">
+        {t('skills.title.before')}
+        <span class="serif">{t('skills.title.accent')}</span>
+      </h2>
+    </div>
+    <p class="intro reveal">{t('skills.intro')}</p>
+  </div>
+
+  <div class="groups">
+    {groups.map((group) => (
+      <div class="group reveal">
+        <h3 class="group-label">{group.label}</h3>
+        <ul class="tiles">
+          {group.skills.map((skill) => (
+            <li class="tile" style={skill.color ? `--brand: ${skill.color}` : undefined}>
+              <svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={skill.path} />
+              </svg>
+              <span class="text">
+                <span class="name">{skill.name}</span>
+                <span class="used">{skill.used}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .intro {
+    max-width: 400px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .groups {
+    margin-top: 56px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .group {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .group-label {
+    margin: 10px 0 0;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    transition:
+      border-color 0.4s ease,
+      transform 0.6s var(--ease-out);
+  }
+
+  .logo {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    fill: var(--ink);
+    transition: fill 0.4s ease;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .used {
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  .tile:hover {
+    border-color: var(--brand, var(--line-strong));
+    transform: translateY(-2px);
+  }
+
+  .tile:hover .logo {
+    fill: var(--brand, var(--ink));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile {
+      transition: none;
+    }
+    .tile:hover {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .group {
+      grid-template-columns: 1fr;
+      padding: 28px 0;
+    }
+    .group-label {
+      margin: 0;
+    }
+    .tiles {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  }
+</style>
