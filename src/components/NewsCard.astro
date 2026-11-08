@@ -1,0 +1,262 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { htmlLang, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { localePath, newsSlug } from '../i18n/utils';
+import NewsSteps from './NewsSteps.astro';
+
+interface Props {
+  item: CollectionEntry<'news'>;
+  locale: Locale;
+  /** Heading level: h3 inside the home section, h2 on the news page. */
+  level?: 2 | 3;
+}
+
+const { item, locale, level = 3 } = Astro.props;
+const t = useTranslations(locale);
+const { title, tag, date, status, summary, progress, stack, steps } = item.data;
+const href = localePath(locale, 'news', newsSlug(item));
+const month = new Intl.DateTimeFormat(htmlLang[locale], { month: 'long', year: 'numeric' }).format(date);
+const Heading = level === 2 ? 'h2' : 'h3';
+---
+
+<article class="card reveal" data-spotlight>
+  <div class="meta">
+    <time datetime={date.toISOString().slice(0, 10)}>{month}</time>
+    <span class="sep" aria-hidden="true">
+      ·
+    </span>
+    <span>{tag}</span>
+  </div>
+  {status && (
+    <span class="status">
+      <span class="live" aria-hidden="true" />
+      {status}
+    </span>
+  )}
+
+  <Heading class="title">
+    <a href={href} class="stretched">
+      {title}
+    </a>
+  </Heading>
+  <p class="summary">{summary}</p>
+
+  <div class="foot">
+    {steps.length > 0 && <NewsSteps steps={steps} locale={locale} compact />}
+    {progress !== undefined && (
+      <p class="pct">
+        <span class="tabular" data-count={progress}>
+          {progress}
+        </span>
+        &nbsp;% {t('news.progress').toLowerCase()}
+      </p>
+    )}
+    {stack.length > 0 && (
+      <ul class="stack">
+        {stack.slice(0, 4).map((s) => (
+          <li>{s}</li>
+        ))}
+      </ul>
+    )}
+    <span class="more" aria-hidden="true">
+      {t('news.read')} <span class="arrow">→</span>
+    </span>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(24px, 3vw, 36px);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: var(--surface);
+    transition:
+      border-color 0.5s ease,
+      transform 0.8s var(--ease-out),
+      box-shadow 0.8s var(--ease-out);
+  }
+
+  /* Soft light that follows the pointer (position set by Base.astro). */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in srgb, var(--accent) 9%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .card:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px -32px var(--shadow-phone);
+  }
+
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  time {
+    color: var(--ink);
+  }
+
+  time::first-letter {
+    text-transform: uppercase;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  .live {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .live::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: ping 2.2s var(--ease-out) infinite;
+  }
+
+  .title {
+    margin: 6px 0 0;
+    max-width: 760px;
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+  }
+
+  .stretched {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* The whole card is clickable, the link stays the heading for screen readers. */
+  .stretched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+
+  .stretched:focus-visible {
+    outline: none;
+  }
+
+  .stretched:focus-visible::after {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .summary {
+    max-width: 720px;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px 28px;
+    margin-top: 10px;
+  }
+
+  .pct {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .pct .tabular {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack li {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  .more {
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .card:hover .more .arrow {
+    transform: translateX(6px);
+  }
+
+  @keyframes ping {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .more {
+      margin-left: 0;
+    }
+  }
+</style>

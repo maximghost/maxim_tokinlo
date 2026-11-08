@@ -1,0 +1,367 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import type { Locale } from '../i18n/config';
+import type { CollectionEntry } from 'astro:content';
+import { useTranslations } from '../i18n/ui';
+import { localePath, projectSlug } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  project: CollectionEntry<'projects'>;
+  next?: CollectionEntry<'projects'> | undefined;
+}
+
+const { locale, project, next } = Astro.props;
+const t = useTranslations(locale);
+const { Content } = await render(project);
+const { title, category, tagline, summary, role, period, status, stack, links, images } = project.data;
+const [taglineAccent, ...taglineRest] = tagline.split(',');
+const email = 'yaovitokinlo13@gmail.com';
+const projectsHome = `${localePath(locale)}#projets`;
+---
+
+<Base locale={locale} title={`${title} — Maxim Tokinlo`} description={summary}>
+  <Header locale={locale} />
+
+  <main id="contenu">
+    <article>
+      <header class="container intro">
+        <a href={projectsHome} class="back link fade">
+          <span class="arrow-back" aria-hidden="true">
+            ←
+          </span>
+          {t('case.back')}
+        </a>
+
+        {category && (
+          <p class="eyebrow fade" style="animation-delay: 0.1s">
+            {category}
+          </p>
+        )}
+
+        <h1 class="title">
+          <span class="line">
+            <span style="animation-delay: 0.2s">{title}</span>
+          </span>
+        </h1>
+
+        <p class="tagline fade" style="animation-delay: 0.45s">
+          {taglineRest.length > 0 ? (
+            <>
+              <span class="serif accent">{taglineAccent},</span>
+              {taglineRest.join(',')}
+            </>
+          ) : (
+            tagline
+          )}
+        </p>
+
+        <p class="summary fade" style="animation-delay: 0.6s">
+          {summary}
+        </p>
+
+        <dl class="facts fade" style="animation-delay: 0.75s">
+          <div>
+            <dt>{t('case.role')}</dt>
+            <dd>{role}</dd>
+          </div>
+          <div>
+            <dt>{t('case.period')}</dt>
+            <dd>{period}</dd>
+          </div>
+          <div>
+            <dt>{t('case.status')}</dt>
+            <dd>{status}</dd>
+          </div>
+          {stack.length > 0 && (
+            <div>
+              <dt>{t('case.stack')}</dt>
+              <dd>{stack.join(' · ')}</dd>
+            </div>
+          )}
+        </dl>
+
+        {(links.demo || links.site) && (
+          <div class="ctas fade" style="animation-delay: 0.9s">
+            {links.demo && (
+              <a href={links.demo} class="btn btn-primary" target="_blank" rel="noopener">
+                {t('projects.demo')} <span aria-hidden="true">↗</span>
+              </a>
+            )}
+            {links.site && (
+              <a href={links.site} class="btn btn-ghost" target="_blank" rel="noopener">
+                {t('projects.site')} <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </div>
+        )}
+      </header>
+
+      {images.length > 0 && (
+        <div class="container">
+          <div class="stage reveal">
+            {images.map((img, i) => (
+              <div class:list={['phone', i % 2 === 0 ? 'phone-a' : 'phone-b']}>
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  widths={[320, 480, 628]}
+                  sizes="(max-width: 720px) 42vw, 280px"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="container body">
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+    </article>
+
+    <section class="container closing">
+      {next && (
+        <a href={localePath(locale, 'projects', projectSlug(next))} class="next reveal">
+          <span class="next-label">{t('case.next')}</span>
+          <span class="next-title">
+            {next.data.title}{' '}
+            <span class="arrow" aria-hidden="true">
+              →
+            </span>
+          </span>
+        </a>
+      )}
+
+      <div class="cta reveal">
+        <h2>
+          {t('case.cta.title.before')}
+          <span class="serif">{t('case.cta.title.accent')}</span>
+        </h2>
+        <div class="cta-bottom">
+          <p>{t('case.cta.text')}</p>
+          <a href={`mailto:${email}`} class="btn btn-primary btn-lg" data-contact-open>
+            {t('contact.cta')}{' '}
+            <span class="arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale={locale} />
+  <ContactDialog locale={locale} email={email} />
+</Base>
+
+<style>
+  .intro {
+    padding-top: clamp(32px, 6vw, 72px);
+    padding-bottom: 64px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .back:hover {
+    color: var(--ink);
+  }
+
+  .arrow-back {
+    display: inline-block;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .back:hover .arrow-back {
+    transform: translateX(-6px);
+  }
+
+  .intro .eyebrow {
+    margin-top: 48px;
+  }
+
+  .title {
+    margin: 20px 0 0;
+    font-weight: 500;
+    font-size: clamp(56px, 11vw, 160px);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+  }
+
+  .tagline {
+    max-width: 900px;
+    margin: 24px 0 0;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+
+  .summary {
+    max-width: 640px;
+    margin: 28px 0 0;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px 32px;
+    margin: 56px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .facts dt {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 4vw, 56px);
+    padding: clamp(40px, 7vw, 96px) 24px;
+    border-radius: 28px;
+    background: var(--stage);
+    transition: background-color 0.5s ease;
+  }
+
+  .phone {
+    width: min(280px, 42%);
+  }
+
+  .phone :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 30px 40px var(--shadow-phone));
+  }
+
+  .phone-a {
+    animation: float 7s ease-in-out infinite;
+  }
+
+  .phone-b {
+    margin-top: 72px;
+    animation: float 7s ease-in-out -3.5s infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Long-form content */
+  .body {
+    padding-top: 96px;
+    padding-bottom: 64px;
+  }
+
+  /* Closing */
+  .closing {
+    padding-top: 64px;
+    padding-bottom: 96px;
+  }
+
+  .next {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 40px 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .next-label {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .next-title {
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    transition: letter-spacing 0.7s var(--ease-out);
+  }
+
+  .next:hover .next-title {
+    letter-spacing: -0.035em;
+  }
+
+  .cta {
+    padding-top: 120px;
+  }
+
+  .cta h2 {
+    margin: 0;
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .cta-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .cta-bottom p {
+    margin: 0;
+    font-size: 17px;
+    color: var(--ink-2);
+  }
+
+  .btn-lg {
+    min-height: 56px;
+    padding: 0 30px;
+    font-size: 16px;
+  }
+</style>

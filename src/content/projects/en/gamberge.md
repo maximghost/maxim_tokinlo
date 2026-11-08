@@ -13,6 +13,7 @@ stats:
   - { value: "0", label: "ads" }
 links:
   demo: "https://gamberge.vercel.app"
+  site: "https://gamberge-site.vercel.app"
 images:
   - { src: "../../../assets/projects/gamberge-hub-light.png", alt: "Gamberge home screen in light mode" }
   - { src: "../../../assets/projects/gamberge-hub-dark.png", alt: "Gamberge home screen in dark mode" }

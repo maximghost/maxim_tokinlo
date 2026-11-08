@@ -75,3 +75,16 @@ export async function getProjects(locale: Locale): Promise<Project[]> {
 
   return result.sort((a, b) => a.data.order - b.data.order);
 }
+
+type News = CollectionEntry<'news'>;
+
+/** The news item's slug, without its language folder: "fr/sfm" -> "sfm". */
+export function newsSlug(item: News): string {
+  return item.id.split('/').slice(1).join('/');
+}
+
+/** News items for one language, newest first (then by `order`). */
+export async function getNews(locale: Locale): Promise<News[]> {
+  const items = await getCollection('news', (e) => e.id.startsWith(`${locale}/`));
+  return items.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.order - b.data.order);
+}

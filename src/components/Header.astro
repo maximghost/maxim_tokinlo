@@ -52,7 +52,10 @@ const home = `/${locale}/`;
         <a href={localePath(locale, 'about')} style="--i: 2">
           {t('nav.journey')}
         </a>
-        <a href={`${home}#contact`} style="--i: 3">
+        <a href={localePath(locale, 'news')} style="--i: 3">
+          {t('nav.news')}
+        </a>
+        <a href={`${home}#contact`} style="--i: 4">
           {t('nav.contact')}
         </a>
       </nav>

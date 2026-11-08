@@ -1,0 +1,69 @@
+---
+interface Props {
+  value: number;
+  label: string;
+}
+
+const { value, label } = Astro.props;
+---
+
+<div class="progress reveal" role="group" aria-label={`${label} : ${value} %`}>
+  <div class="top">
+    <span class="label">{label}</span>
+    <span class="value tabular">
+      <span data-count={value}>{value}</span>&nbsp;%
+    </span>
+  </div>
+  <div class="track" aria-hidden="true">
+    <span class="fill" style={`--p: ${value / 100}`}></span>
+  </div>
+</div>
+
+<style>
+  .progress {
+    flex: 0 1 280px;
+    min-width: 220px;
+  }
+
+  .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .label {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .value {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .track {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: var(--line-soft);
+  }
+
+  .fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+    transform: scaleX(var(--p));
+    transform-origin: left center;
+    animation: fill 1.6s var(--ease-out) 0.3s both;
+  }
+
+  @keyframes fill {
+    from {
+      transform: scaleX(0);
+    }
+  }
+</style>

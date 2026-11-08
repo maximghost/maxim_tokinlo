@@ -23,6 +23,7 @@ const projects = defineCollection({
       links: z
         .object({
           demo: z.url().optional(),
+          site: z.url().optional(),
           repo: z.url().optional(),
         })
         .default({}),
@@ -44,7 +45,7 @@ const about = defineCollection({
 
 /**
  * News, one Markdown file per item and per language: src/content/news/<lang>/<slug>.md
- * Shown on the home page, newest first.
+ * The latest items are teased on the home page; each item also has its own page under /<lang>/actualites/.
  */
 const news = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
@@ -53,8 +54,22 @@ const news = defineCollection({
     tag: z.string(),
     date: z.coerce.date(),
     status: z.string().optional(),
+    summary: z.string(),
+    /** 0–100, shown as a progress bar when set. */
+    progress: z.number().min(0).max(100).optional(),
     stack: z.array(z.string()).default([]),
-    links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    /** External URLs or internal paths (e.g. /fr/projets/gamberge/). */
+    links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
+    highlights: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+    steps: z
+      .array(
+        z.object({
+          label: z.string(),
+          state: z.enum(['done', 'current', 'next']),
+          note: z.string().optional(),
+        }),
+      )
+      .default([]),
     order: z.number().int().default(0),
   }),
 });

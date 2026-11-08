@@ -13,6 +13,7 @@ stats:
   - { value: "0", label: "mainosta" }
 links:
   demo: "https://gamberge.vercel.app"
+  site: "https://gamberge-site.vercel.app"
 images:
   - { src: "../../../assets/projects/gamberge-hub-light.png", alt: "Gambergen aloitusnäkymä vaaleassa tilassa" }
   - { src: "../../../assets/projects/gamberge-hub-dark.png", alt: "Gambergen aloitusnäkymä tummassa tilassa" }

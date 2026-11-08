@@ -45,7 +45,9 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
       <dl class="stats">
         {stats.map((s) => (
           <div>
-            <dt class="tabular">{s.value}</dt>
+            <dt class="tabular" data-count={/^\d+$/.test(s.value) ? s.value : undefined}>
+              {s.value}
+            </dt>
             <dd>{s.label}</dd>
           </div>
         ))}
@@ -70,6 +72,11 @@ const chips = stack.filter((s) => !['Vite', 'Tailwind CSS v4', 'Framer Motion', 
       {links.demo && (
         <a href={links.demo} class="link accent" target="_blank" rel="noopener">
           {t('projects.demo')} <span aria-hidden="true">↗</span>
+        </a>
+      )}
+      {links.site && (
+        <a href={links.site} class="link" target="_blank" rel="noopener">
+          {t('projects.site')} <span aria-hidden="true">↗</span>
         </a>
       )}
     </div>

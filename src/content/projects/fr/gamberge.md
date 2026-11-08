@@ -13,6 +13,7 @@ stats:
   - { value: "0", label: "publicité" }
 links:
   demo: "https://gamberge.vercel.app"
+  site: "https://gamberge-site.vercel.app"
 images:
   - { src: "../../../assets/projects/gamberge-hub-light.png", alt: "Écran d’accueil de Gamberge en mode clair" }
   - { src: "../../../assets/projects/gamberge-hub-dark.png", alt: "Écran d’accueil de Gamberge en mode sombre" }

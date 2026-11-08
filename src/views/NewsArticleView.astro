@@ -1,0 +1,363 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactDialog from '../components/ContactDialog.astro';
+import NewsSteps from '../components/NewsSteps.astro';
+import Progress from '../components/Progress.astro';
+import NewsCard from '../components/NewsCard.astro';
+import { htmlLang, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { localePath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  item: CollectionEntry<'news'>;
+  others: CollectionEntry<'news'>[];
+}
+
+const { locale, item, others } = Astro.props;
+const t = useTranslations(locale);
+const { Content } = await render(item);
+const { title, tag, date, status, summary, progress, stack, links, highlights, steps } = item.data;
+const month = new Intl.DateTimeFormat(htmlLang[locale], {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(date);
+const email = 'yaovitokinlo13@gmail.com';
+const isExternal = (url: string) => /^https?:\/\//.test(url);
+---
+
+<Base locale={locale} title={`${title} — Maxim Tokinlo`} description={summary}>
+  <Header locale={locale} />
+
+  <main id="contenu">
+    <article>
+      <header class="container intro">
+        <a href={localePath(locale, 'news')} class="back link fade">
+          <span class="arrow-back" aria-hidden="true">
+            ←
+          </span>
+          {t('news.back')}
+        </a>
+
+        <p class="eyebrow fade" style="animation-delay: 0.1s">
+          <time datetime={date.toISOString().slice(0, 10)}>{month}</time>
+          <span aria-hidden="true">·</span>
+          <span>{tag}</span>
+        </p>
+
+        <h1 class="title">
+          <span class="line">
+            <span style="animation-delay: 0.2s">{title}</span>
+          </span>
+        </h1>
+
+        <p class="summary fade" style="animation-delay: 0.45s">
+          {summary}
+        </p>
+
+        <div class="actions fade" style="animation-delay: 0.6s">
+          {status && (
+            <span class="status">
+              <span class="live" aria-hidden="true" />
+              {status}
+            </span>
+          )}
+          {links.map((l, i) => (
+            <a
+              href={l.url}
+              class:list={['btn', i === 0 ? 'btn-primary' : 'btn-ghost']}
+              {...(isExternal(l.url) ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              {l.label} <span aria-hidden="true">{isExternal(l.url) ? '↗' : '→'}</span>
+            </a>
+          ))}
+        </div>
+      </header>
+
+      {(highlights.length > 0 || progress !== undefined) && (
+        <section class="container facts-wrap" aria-label={t('news.facts')}>
+          <div class="facts-card reveal" data-spotlight>
+            <p class="block-label">{t('news.facts')}</p>
+            <div class="facts-grid">
+              {highlights.length > 0 && (
+                <dl class="facts">
+                  {highlights.map((h) => (
+                    <div>
+                      <dt>{h.label}</dt>
+                      <dd>{h.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {progress !== undefined && <Progress value={progress} label={t('news.progress')} />}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {steps.length > 0 && (
+        <section class="container block">
+          <p class="block-label reveal">{t('news.steps')}</p>
+          <NewsSteps steps={steps} locale={locale} />
+        </section>
+      )}
+
+      <div class="container body">
+        <div class="prose">
+          <Content />
+        </div>
+
+        {stack.length > 0 && (
+          <div class="stack-wrap reveal">
+            <p class="block-label">{t('news.stack')}</p>
+            <ul class="stack">
+              {stack.map((s, i) => (
+                <li style={`--i: ${i}`}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </article>
+
+    {others.length > 0 && (
+      <section class="container more">
+        <p class="block-label reveal">{t('news.more')}</p>
+        <div class="more-grid">
+          {others.map((o) => (
+            <NewsCard item={o} locale={locale} />
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+
+  <Footer locale={locale} />
+  <ContactDialog locale={locale} email={email} />
+</Base>
+
+<style>
+  .intro {
+    padding-top: clamp(32px, 6vw, 72px);
+    padding-bottom: 56px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .back:hover {
+    color: var(--ink);
+  }
+
+  .arrow-back {
+    display: inline-block;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .back:hover .arrow-back {
+    transform: translateX(-6px);
+  }
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 40px;
+  }
+
+  time::first-letter {
+    text-transform: uppercase;
+  }
+
+  .title {
+    max-width: 1080px;
+    margin: 22px 0 0;
+    font-size: clamp(38px, 6vw, 84px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
+  .title .line > span {
+    display: inline;
+  }
+
+  .summary {
+    max-width: 720px;
+    margin: 28px 0 0;
+    font-size: clamp(17px, 1.6vw, 20px);
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+
+  .live {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .live::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: ping 2.2s var(--ease-out) infinite;
+  }
+
+  .block-label {
+    margin: 0 0 24px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .facts-card {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(24px, 4vw, 44px);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    background: var(--surface);
+  }
+
+  .facts-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      520px circle at var(--mx, 80%) var(--my, 0%),
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 60%
+    );
+  }
+
+  .facts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px 56px;
+  }
+
+  .facts {
+    display: grid;
+    flex: 1 1 560px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px 32px;
+    margin: 0;
+  }
+
+  .facts dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 6px 0 0;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  .block {
+    padding-top: clamp(56px, 7vw, 88px);
+  }
+
+  .body {
+    max-width: 820px;
+    padding-top: clamp(56px, 7vw, 88px);
+    padding-bottom: clamp(56px, 7vw, 88px);
+  }
+
+  .stack-wrap {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack li {
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--ink-2);
+    animation: fade-in 1s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 0.06s);
+    transition:
+      border-color 0.4s ease,
+      color 0.4s ease;
+  }
+
+  .stack li:hover {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .more {
+    padding-bottom: clamp(80px, 10vw, 140px);
+    border-top: 1px solid var(--line);
+    padding-top: clamp(56px, 7vw, 88px);
+  }
+
+  .more-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+    gap: 16px;
+  }
+
+  @keyframes ping {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+</style>

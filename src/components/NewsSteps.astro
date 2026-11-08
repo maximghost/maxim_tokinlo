@@ -1,0 +1,263 @@
+---
+import type { Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Step {
+  label: string;
+  state: 'done' | 'current' | 'next';
+  note?: string | undefined;
+}
+
+interface Props {
+  steps: Step[];
+  locale: Locale;
+  /** Compact: dots only, with the current step named underneath (used on cards). */
+  compact?: boolean;
+}
+
+const { steps, locale, compact = false } = Astro.props;
+const t = useTranslations(locale);
+const currentIndex = steps.findIndex((s) => s.state === 'current');
+const current = steps[currentIndex];
+---
+
+{compact ? (
+  <div class="mini">
+    <ol class="dots" aria-hidden="true" style={`--n: ${steps.length}`}>
+      {steps.map((s, i) => (
+        <li class:list={['dot', s.state]} style={`--i: ${i}`} />
+      ))}
+    </ol>
+    {current && (
+      <p class="mini-label">
+        <span class="tabular">
+          {currentIndex + 1}/{steps.length}
+        </span>
+        {current.label}
+      </p>
+    )}
+  </div>
+) : (
+  <ol class="steps" style={`--n: ${steps.length}`}>
+    {steps.map((s, i) => (
+      <li class:list={['step', s.state, 'reveal']} style={`--i: ${i}`}>
+        <span class="node" aria-hidden="true">
+          {s.state === 'done' && (
+            <svg viewBox="0 0 16 16" width="12" height="12">
+              <path
+                d="M3.5 8.5l3 3 6-7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          )}
+        </span>
+        <span class="state">{t(`news.state.${s.state}`)}</span>
+        <span class="label">{s.label}</span>
+        {s.note && <span class="note">{s.note}</span>}
+      </li>
+    ))}
+  </ol>
+)}
+
+<style>
+  /* Full stepper */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 20px 0 0;
+  }
+
+  /* The connector to the next step, drawn from the node's centre. */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 28px;
+    right: 0;
+    height: 2px;
+    background: var(--line);
+  }
+
+  .step.done:not(:last-child)::after {
+    background: var(--accent);
+    transform-origin: left center;
+    animation: grow 1.2s var(--ease-in-out) both;
+    animation-delay: calc(0.25s + var(--i) * 0.2s);
+  }
+
+  .node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 14px;
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--on-accent);
+  }
+
+  .done .node {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .current .node {
+    border-color: var(--accent);
+  }
+
+  .current .node::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s var(--ease-in-out) infinite;
+  }
+
+  .state {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .current .state {
+    color: var(--accent);
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  .next .label {
+    color: var(--ink-2);
+  }
+
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 760px) {
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      column-gap: 16px;
+      padding: 0 0 24px;
+    }
+    .node {
+      grid-row: 1 / span 3;
+      margin: 0;
+    }
+    .step:not(:last-child)::after {
+      top: 28px;
+      bottom: 0;
+      left: 13px;
+      right: auto;
+      width: 2px;
+      height: auto;
+      transform-origin: top center;
+      animation-name: grow-y;
+    }
+  }
+
+  /* Compact dots */
+  .mini {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dots {
+    display: grid;
+    grid-template-columns: repeat(var(--n), 1fr);
+    gap: 6px;
+    max-width: 260px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dot {
+    height: 4px;
+    border-radius: 99px;
+    background: var(--line);
+  }
+
+  .dot.done {
+    background: var(--accent);
+  }
+
+  .dot.current {
+    background: linear-gradient(90deg, var(--accent) 0 50%, var(--line) 50% 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s var(--ease-in-out) infinite alternate;
+  }
+
+  .mini-label {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  .mini-label .tabular {
+    color: var(--accent);
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(0.6);
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 50% 0;
+    }
+  }
+
+  @keyframes grow-y {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+</style>

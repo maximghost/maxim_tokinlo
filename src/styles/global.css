@@ -375,6 +375,44 @@ a:hover .arrow {
     animation-timeline: view();
     animation-range: entry 0% cover 28%;
   }
+
+  /* Section titles are unveiled from below rather than faded. */
+  .section-title.reveal {
+    animation-name: unveil;
+    animation-range: entry 5% cover 32%;
+  }
+
+  /* A top rule that draws itself from left to right as it scrolls into view. */
+  .draw-top {
+    position: relative;
+    border-top-color: transparent !important;
+  }
+  .draw-top::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--line-strong);
+    transform-origin: left center;
+    animation: grow linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+@keyframes unveil {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(-20% -5% -25% -5%);
+  }
 }
 @supports not (animation-timeline: view()) {
   .js .reveal {
