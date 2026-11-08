@@ -30,7 +30,8 @@ import { locales, localeNames } from '../i18n/config';
             .map((l) => String(l).slice(0, 2).toLowerCase())
             .find((l) => locales.includes(l)) || 'fr';
       }
-      location.replace('/' + target + '/' + location.hash);
+      // Keep ?ref=… (CV, cover letter) so analytics can still see where the visit came from.
+      location.replace('/' + target + '/' + location.search + location.hash);
     </script>
     <noscript>
       <meta http-equiv="refresh" content="0; url=/fr/" />

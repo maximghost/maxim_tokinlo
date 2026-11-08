@@ -78,6 +78,34 @@ const ogImage = portrait ? await getImage({ src: portrait, width: 800, format: '
     <BackToTop label={t('nav.top')} />
 
     <script>
+      import { inject } from '@vercel/analytics';
+
+      /*
+       * Vercel Web Analytics. Links in the CV and cover letter end with ?ref=cv or ?ref=lettre.
+       * The free plan does not report query parameters, so the source of the first page view is
+       * moved into the path: /fr/?ref=cv is reported as /via/cv/fr/ in the Pages panel.
+       * The parameter is then removed from the address bar, so a shared link does not carry it.
+       */
+      const url = new URL(location.href);
+      const ref = url.searchParams.get('ref');
+      let source = ref && /^[a-z0-9-]{1,20}$/.test(ref) ? ref : null;
+      if (ref !== null) {
+        url.searchParams.delete('ref');
+        history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+      }
+
+      inject({
+        beforeSend(event) {
+          if (event.type !== 'pageview' || source === null) return event;
+          const viewed = new URL(event.url);
+          viewed.pathname = `/via/${source}${viewed.pathname}`;
+          source = null;
+          return { ...event, url: viewed.toString() };
+        },
+      });
+    </script>
+
+    <script>
       // Scroll reveal fallback for browsers without scroll-driven animations.
       if (!CSS.supports('animation-timeline: view()')) {
         const observer = new IntersectionObserver(
