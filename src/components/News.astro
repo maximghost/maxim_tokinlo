@@ -1,0 +1,220 @@
+---
+import { getCollection, render } from 'astro:content';
+import { htmlLang, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  number: string;
+}
+
+const { locale, number } = Astro.props;
+const t = useTranslations(locale);
+const month = new Intl.DateTimeFormat(htmlLang[locale], { month: 'long', year: 'numeric' });
+
+const entries = (await getCollection('news', (e) => e.id.startsWith(`${locale}/`))).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.order - b.data.order,
+);
+const items = await Promise.all(
+  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+---
+
+{items.length > 0 && (
+  <section id="actualites" class="container section">
+    <div class="head">
+      <div>
+        <p class="eyebrow reveal">
+          <span class="tabular">{number}</span>
+          <span>{t('news.label')}</span>
+        </p>
+        <h2 class="section-title reveal">
+          {t('news.title.before')}
+          <span class="serif">{t('news.title.accent')}</span>
+        </h2>
+      </div>
+      <p class="intro reveal">{t('news.intro')}</p>
+    </div>
+
+    <ol class="list">
+      {items.map(({ entry, Content }) => {
+        const { title, tag, date, status, stack, links } = entry.data;
+        return (
+          <li class="item reveal">
+            <div class="meta">
+              <time datetime={date.toISOString().slice(0, 10)}>{month.format(date)}</time>
+              <span class="tag">{tag}</span>
+            </div>
+            <div class="body">
+              <h3 class="title">{title}</h3>
+              <div class="text">
+                <Content />
+              </div>
+              {(stack.length > 0 || links.length > 0) && (
+                <div class="foot">
+                  {stack.length > 0 && (
+                    <ul class="stack">
+                      {stack.map((s) => (
+                        <li>{s}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {links.map((l) => (
+                    <a class="link" href={l.url} target="_blank" rel="noopener">
+                      {l.label}{' '}
+                      <span class="arrow" aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+            {status && <span class="status">{status}</span>}
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+)}
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .intro {
+    max-width: 400px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .list {
+    margin: 56px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) auto;
+    gap: 16px 32px;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 6px;
+    font-size: 13px;
+  }
+
+  time {
+    color: var(--ink);
+  }
+
+  time::first-letter {
+    text-transform: uppercase;
+  }
+
+  .tag {
+    color: var(--muted);
+  }
+
+  .title {
+    margin: 0;
+    max-width: 680px;
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .text {
+    max-width: 680px;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+
+  .text :global(p) {
+    margin: 0 0 12px;
+  }
+
+  .text :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .text :global(strong) {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+    margin-top: 20px;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack li {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  .foot .link {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .status {
+    align-self: start;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 860px) {
+    .item {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+      padding: 32px 0;
+    }
+    .meta {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      padding-top: 0;
+    }
+    .status {
+      grid-row: 3;
+      justify-self: start;
+    }
+  }
+</style>

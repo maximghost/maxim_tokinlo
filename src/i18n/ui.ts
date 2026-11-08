@@ -74,6 +74,10 @@ const fr = {
     'Étudiant en Internet et multimédia à l’IFRI, j’ai mis mes études en pause pour devenir père et faire vivre ma famille. Ces années m’ont appris ce qu’aucun cours n’enseigne : aller au bout des choses, seul, avec rigueur. Aujourd’hui, je mène de front mes études, mes projets et ma vie de famille.',
   'journey.link': 'Lire mon parcours',
 
+  'news.label': 'Actualités',
+  'news.title.before': 'Ce qui se construit ',
+  'news.title.accent': 'en ce moment.',
+  'news.intro': 'Les réalisations en cours de Ghost.Technologies et mes projets personnels.',
   'ghost.label': 'Structure',
   'ghost.text':
     'La structure à travers laquelle je conçois mes produits. Son ambition : créer des outils numériques utiles, pensés pour les réalités africaines et prêts à servir au-delà.',
@@ -204,6 +208,10 @@ const en: Dictionary = {
     'A student in Internet and Multimedia at IFRI, I put my studies on hold to become a father and provide for my family. Those years taught me what no course does: seeing things through, on my own, with rigour. Today I balance my studies, my projects and my family life.',
   'journey.link': 'Read my story',
 
+  'news.label': 'News',
+  'news.title.before': 'What I’m building ',
+  'news.title.accent': 'right now.',
+  'news.intro': 'Work in progress at Ghost.Technologies, and my own projects.',
   'ghost.label': 'Company',
   'ghost.text':
     'The company through which I design my products. Its ambition: to create useful digital tools, built for African realities and ready to serve beyond them.',
@@ -331,6 +339,10 @@ const fi: Dictionary = {
     'Opiskelen internetiä ja multimediaa IFRI:ssä. Keskeytin opintoni, kun minusta tuli isä ja perheeni elättäminen oli etusijalla. Nuo vuodet opettivat minulle sen, mitä mikään kurssi ei opeta: viemään asiat loppuun, yksin ja huolellisesti. Nyt yhdistän opinnot, projektit ja perhe-elämän.',
   'journey.link': 'Lue tarinani',
 
+  'news.label': 'Ajankohtaista',
+  'news.title.before': 'Mitä rakennan ',
+  'news.title.accent': 'juuri nyt.',
+  'news.intro': 'Ghost.Technologiesin keskeneräiset työt ja omat projektini.',
   'ghost.label': 'Yritys',
   'ghost.text':
     'Yritys, jonka kautta suunnittelen tuotteeni. Sen tavoitteena on luoda hyödyllisiä digitaalisia työkaluja, jotka on suunniteltu afrikkalaisiin olosuhteisiin ja jotka palvelevat myös niiden ulkopuolella.',

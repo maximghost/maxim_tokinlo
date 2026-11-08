@@ -5,7 +5,7 @@ tagline: "10 jeux de réflexion, un seul cerveau qui carbure."
 summary: "Un hub mobile de dix mini-jeux de réflexion en français, jouable en solo, à plusieurs sur un même téléphone ou en duel en ligne en temps réel. Conçu, développé et designé seul, de A à Z."
 role: "Fondateur, chef de projet et développeur (projet solo)"
 period: "Depuis mi-2025 (environ 18 mois)"
-status: "En finition — publication Play Store puis App Store en cours"
+status: "En finition — publication prévue fin décembre 2026"
 stack: ["React 19", "TypeScript", "Vite", "Tailwind CSS v4", "Framer Motion", "Capacitor", "Supabase", "PostgreSQL", "FedaPay", "Vitest"]
 stats:
   - { value: "10", label: "jeux" }
@@ -94,7 +94,7 @@ Gamberge refuse la publicité. Le modèle est simple : 20 parties gratuites pou
 
 ## Où en est le projet
 
-L’application est jouable en démo sur le web. Les finitions d’ergonomie et les tests sur appareils réels sont en cours, avant la publication sur le Play Store puis sur l’App Store. L’objectif technique suivant est un duel fluide avec 1 000, puis 10 000 joueurs connectés simultanément.
+L’application est jouable en démo sur le web. Le contenu des jeux, la page d’achat et l’ergonomie des interfaces sont en cours de perfectionnement, ainsi que les tests sur appareils réels. La publication sur le Play Store, puis sur l’App Store, est prévue fin décembre 2026. L’objectif technique suivant est un duel fluide avec 1 000, puis 10 000 joueurs connectés simultanément.
 
 ## Ce que j’en retiens
 

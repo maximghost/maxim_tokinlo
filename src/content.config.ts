@@ -42,4 +42,21 @@ const about = defineCollection({
   }),
 });
 
-export const collections = { projects, about };
+/**
+ * News, one Markdown file per item and per language: src/content/news/<lang>/<slug>.md
+ * Shown on the home page, newest first.
+ */
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string(),
+    tag: z.string(),
+    date: z.coerce.date(),
+    status: z.string().optional(),
+    stack: z.array(z.string()).default([]),
+    links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    order: z.number().int().default(0),
+  }),
+});
+
+export const collections = { projects, about, news };

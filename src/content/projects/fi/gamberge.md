@@ -5,7 +5,7 @@ tagline: "10 aivopeliä, yksi täysillä käyvä mieli."
 summary: "Kymmenen ranskankielisen aivopelin mobiilikokonaisuus: pelaa yksin, kavereiden kanssa samalla puhelimella tai reaaliaikaisissa verkkokaksintaisteluissa. Suunniteltu, kehitetty ja muotoiltu yksin alusta loppuun."
 role: "Perustaja, projektipäällikkö ja kehittäjä (sooloprojekti)"
 period: "Vuoden 2025 puolivälistä (noin 18 kuukautta)"
-status: "Viimeistelyssä — julkaisu Play Storessa ja sitten App Storessa käynnissä"
+status: "Viimeistelyssä — julkaisu suunniteltu joulukuun 2026 loppuun"
 stack: ["React 19", "TypeScript", "Vite", "Tailwind CSS v4", "Framer Motion", "Capacitor", "Supabase", "PostgreSQL", "FedaPay", "Vitest"]
 stats:
   - { value: "10", label: "peliä" }
@@ -94,7 +94,7 @@ Gamberge kieltäytyy mainoksista. Malli on yksinkertainen: 20 ilmaista peliä tu
 
 ## Projektin tilanne
 
-Sovellusta voi pelata demona verkossa. Käytettävyyden viimeistely ja testaus oikeilla laitteilla ovat käynnissä ennen julkaisua Play Storessa ja sitten App Storessa. Seuraava tekninen tavoite on sujuva kaksintaistelu 1 000 ja sitten 10 000 samanaikaisella pelaajalla.
+Sovellusta voi pelata demona verkossa. Pelien sisältöä, ostosivua ja käyttöliittymien käytettävyyttä hiotaan parhaillaan, ja testaus oikeilla laitteilla jatkuu. Julkaisu Play Storessa ja sitten App Storessa on suunniteltu joulukuun 2026 loppuun. Seuraava tekninen tavoite on sujuva kaksintaistelu 1 000 ja sitten 10 000 samanaikaisella pelaajalla.
 
 ## Mitä opin
 

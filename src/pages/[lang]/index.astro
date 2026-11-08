@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import Portrait from '../../components/Portrait.astro';
 import ContactDialog from '../../components/ContactDialog.astro';
 import FeaturedProject from '../../components/FeaturedProject.astro';
+import News from '../../components/News.astro';
 import Skills from '../../components/Skills.astro';
 import ProjectRow from '../../components/ProjectRow.astro';
 import { locales, type Locale } from '../../i18n/config';
@@ -158,6 +159,9 @@ const email = 'yaovitokinlo13@gmail.com';
         </a>
       </div>
     </section>
+
+    <!-- News -->
+    <News locale={locale} number="05" />
 
     <!-- Ghost.Technologies -->
     <section id="ghost" class="band">
